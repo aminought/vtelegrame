@@ -4,20 +4,21 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
-	"vtelegrame/api"
-	"vtelegrame/model/telegram"
-	"vtelegrame/model/vk"
+	tgAPI "vtelegrame/api/telegram"
+	vkAPI "vtelegrame/api/vk"
+	tgModel "vtelegrame/model/telegram"
+	vkModel "vtelegrame/model/vk"
 
 	"github.com/skratchdot/open-golang/open"
 )
 
 // Application is a main struct
 type Application struct {
-	VKApi       *api.VKAPI
-	TelegramAPI *api.TelegramAPI
+	VKApi       *vkAPI.API
+	TelegramAPI *tgAPI.API
 	Config      *Config
-	VKUser      vk.User
-	Bot         telegram.Bot
+	VKUser      vkModel.User
+	Bot         tgModel.Bot
 }
 
 // Run is an entry point of application
@@ -80,7 +81,7 @@ func (application *Application) sendHelloMessage() {
 	log.Info("Message \"" + text + "\" was sent")
 }
 
-func (application *Application) getChatID(updates []telegram.Update, username string) (int, error) {
+func (application *Application) getChatID(updates []tgModel.Update, username string) (int, error) {
 	for _, update := range updates {
 		if update.Message.From.UserName == username {
 			return update.Message.Chat.ID, nil

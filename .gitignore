@@ -1,3 +1,4 @@
 .vscode
 debug
 config.json
+*.exe

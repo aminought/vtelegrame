@@ -1,7 +1,8 @@
 package main
 
 import (
-	"vtelegrame/api"
+	"vtelegrame/api/telegram"
+	"vtelegrame/api/vk"
 	"vtelegrame/app"
 
 	"github.com/op/go-logging"
@@ -14,8 +15,12 @@ func main() {
 	config.Load("config.json")
 	log.Info("Config loaded")
 
-	vkAPI := api.VKAPI{}
-	telegramAPI := api.TelegramAPI{}
+	vkLinkFactory := vk.LinkFactory{}
+	vkAPI := vk.API{LinkFactory: vkLinkFactory}
+
+	tgLinkFactory := telegram.LinkFactory{}
+	telegramAPI := telegram.API{LinkFactory: tgLinkFactory}
+
 	application := app.Application{VKApi: &vkAPI, TelegramAPI: &telegramAPI, Config: &config}
 	application.Run()
 }

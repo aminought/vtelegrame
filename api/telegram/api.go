@@ -1,4 +1,4 @@
-package api
+package telegram
 
 import (
 	"vtelegrame/http"
@@ -7,18 +7,18 @@ import (
 
 import "encoding/json"
 
-const telegramAPIRequestStart = "https://api.telegram.org/bot"
-
-// TelegramAPI represents api for telegram.org
-type TelegramAPI struct{}
+// API represents api for telegram.org
+type API struct {
+	LinkFactory LinkFactory
+}
 
 type getMeResult struct {
 	User telegram.User `json:"result"`
 }
 
 // GetMe returns Bot object
-func (telegramAPI *TelegramAPI) GetMe(token string) telegram.Bot {
-	link := telegramAPIRequestStart + token + "/getMe"
+func (api *API) GetMe(token string) telegram.Bot {
+	link := api.LinkFactory.BuildGetMeLink(token)
 	data := http.GetRequest(link)
 	result := getMeResult{}
 	json.Unmarshal(data, &result)
@@ -28,9 +28,9 @@ func (telegramAPI *TelegramAPI) GetMe(token string) telegram.Bot {
 }
 
 // SendMessage sends text message to concrete user
-func (telegramAPI *TelegramAPI) SendMessage(bot telegram.Bot, target string, text string) {
-	link := telegramAPIRequestStart + bot.AccessToken() + "/sendMessage?"
-	var data = make(map[string]string)
+func (api *API) SendMessage(bot telegram.Bot, target string, text string) {
+	link := api.LinkFactory.BuildSendMessageLink(bot.AccessToken())
+	data := make(map[string]string)
 	data["chat_id"] = target
 	data["text"] = text
 	http.PostRequest(link, data)
@@ -41,8 +41,8 @@ type getUpdatesResult struct {
 }
 
 // GetUpdates return bot updates
-func (telegramAPI *TelegramAPI) GetUpdates(bot telegram.Bot) []telegram.Update {
-	link := telegramAPIRequestStart + bot.AccessToken() + "/getUpdates"
+func (api *API) GetUpdates(bot telegram.Bot) []telegram.Update {
+	link := api.LinkFactory.BuildGetUpdatesLink(bot.AccessToken())
 	data := http.GetRequest(link)
 	result := getUpdatesResult{}
 	json.Unmarshal(data, &result)
