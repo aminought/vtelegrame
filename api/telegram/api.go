@@ -1,11 +1,10 @@
 package telegram
 
 import (
+	"encoding/json"
 	"vtelegrame/http"
 	"vtelegrame/model/telegram"
 )
-
-import "encoding/json"
 
 // API represents api for telegram.org
 type API struct {
