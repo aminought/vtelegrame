@@ -15,6 +15,7 @@ type Config struct {
 	ClientID            string `json:"client_id"`
 	VKAccessToken       string `json:"access_token_vk"`
 	TelegramAccessToken string `json:"access_token_telegram"`
+	TelegramUser        string `json:"telegram_user"`
 }
 
 // Load configuration

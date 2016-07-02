@@ -1,9 +1,12 @@
 package app
 
 import (
+	"errors"
 	"fmt"
+	"strconv"
 	"vtelegrame/api"
-	"vtelegrame/model"
+	"vtelegrame/model/telegram"
+	"vtelegrame/model/vk"
 
 	"github.com/skratchdot/open-golang/open"
 )
@@ -13,8 +16,8 @@ type Application struct {
 	VKApi       *api.VKAPI
 	TelegramAPI *api.TelegramAPI
 	Config      *Config
-	VkUser      model.VKUser
-	Bot         model.Bot
+	VKUser      vk.User
+	Bot         telegram.Bot
 }
 
 // Run is an entry point of application
@@ -23,6 +26,7 @@ func (application *Application) Run() {
 	application.loadVKUser(tokenVK)
 	tokenTelegram := application.getTelegramAccessToken()
 	application.loadTelegramBot(tokenTelegram)
+	application.sendHelloMessage()
 }
 
 func (application *Application) getVKAccessToken() string {
@@ -49,7 +53,7 @@ func (application *Application) loadVKUser(token string) {
 	var fields = []string{"uid", "first_name", "last_name"}
 	users := application.VKApi.GetUsers(nil, fields, "nom", token)
 	if len(users) > 0 {
-		var user = application.VkUser
+		var user = application.VKUser
 		user.Load(token, users[0])
 		fmt.Println("Hello, " + user.Name() + " " + user.LastName() + "!")
 	} else {
@@ -60,4 +64,27 @@ func (application *Application) loadVKUser(token string) {
 func (application *Application) loadTelegramBot(token string) {
 	application.Bot = application.TelegramAPI.GetMe(token)
 	log.Info("Bot loaded")
+}
+
+func (application *Application) sendHelloMessage() {
+	config := application.Config
+	target := config.TelegramUser
+	var text = "Hello, " + target + "! Bot will be ready for crossposting soon."
+	updates := application.TelegramAPI.GetUpdates(application.Bot)
+	chatID, err := application.getChatID(updates, target)
+	if err != nil {
+		log.Error(err.Error())
+	}
+
+	application.TelegramAPI.SendMessage(application.Bot, strconv.Itoa(chatID), text)
+	log.Info("Message \"" + text + "\" was sent")
+}
+
+func (application *Application) getChatID(updates []telegram.Update, username string) (int, error) {
+	for _, update := range updates {
+		if update.Message.From.UserName == username {
+			return update.Message.Chat.ID, nil
+		}
+	}
+	return -1, errors.New("Invalid user name")
 }

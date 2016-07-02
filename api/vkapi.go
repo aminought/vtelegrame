@@ -1,6 +1,6 @@
 package api
 
-import "vtelegrame/model"
+import "vtelegrame/model/vk"
 import "vtelegrame/http"
 import "encoding/json"
 import "github.com/op/go-logging"
@@ -47,13 +47,13 @@ func (vkAPI *VKAPI) getGetUsersLink(ids []int, fields []string, nameCase string,
 }
 
 type getUsersResponse struct {
-	Users []model.VKAPIUser `json:"response"`
+	Users []vk.APIUser `json:"response"`
 }
 
 // GetUsers returns regular vk.com users
-func (vkAPI *VKAPI) GetUsers(ids []int, fields []string, nameCase string, token string) []model.VKAPIUser {
+func (vkAPI *VKAPI) GetUsers(ids []int, fields []string, nameCase string, token string) []vk.APIUser {
 	link := vkAPI.getGetUsersLink(ids, fields, nameCase, token)
-	data := http.Request(link)
+	data := http.GetRequest(link)
 	response := getUsersResponse{}
 	json.Unmarshal(data, &response)
 
