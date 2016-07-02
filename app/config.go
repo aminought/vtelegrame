@@ -12,8 +12,9 @@ var log = logging.MustGetLogger("app")
 
 // Config struct
 type Config struct {
-	ClientID    string `json:"client_id"`
-	AccessToken string `json:"access_token"`
+	ClientID            string `json:"client_id"`
+	VKAccessToken       string `json:"access_token_vk"`
+	TelegramAccessToken string `json:"access_token_telegram"`
 }
 
 // Load configuration

@@ -5,14 +5,14 @@ import "vtelegrame/http"
 import "encoding/json"
 import "github.com/op/go-logging"
 
-// VKAPI is a class representing api for vk.com
+// VKAPI represents api for vk.com
 type VKAPI struct {
 	ClientID string
 }
 
 var log = logging.MustGetLogger("api")
 
-const apiRequestStart = "https://api.vk.com/method/"
+const vkAPIRequestStart = "https://api.vk.com/method/"
 
 // GetAuthorizeLink returns link for authorization
 func (vkAPI *VKAPI) GetAuthorizeLink() string {
@@ -29,7 +29,7 @@ func (vkAPI *VKAPI) GetAuthorizeLink() string {
 func (vkAPI *VKAPI) getGetUsersLink(ids []int, fields []string, nameCase string, token string) string {
 	const method = "users.get"
 
-	var link = apiRequestStart
+	var link = vkAPIRequestStart
 	link += method + "?"
 	link += "fields="
 	var fieldsLen = len(fields)

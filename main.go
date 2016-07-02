@@ -8,12 +8,14 @@ import (
 )
 
 var log = logging.MustGetLogger("main")
-var config = app.Config{}
 
 func main() {
+	config := app.Config{}
 	config.Load("config.json")
-	log.Info(config.ClientID)
-	vkAPI := api.VKAPI{ClientID: config.ClientID}
-	application := app.Application{VKApi: &vkAPI}
+	log.Info("Config loaded")
+
+	vkAPI := api.VKAPI{}
+	telegramAPI := api.TelegramAPI{}
+	application := app.Application{VKApi: &vkAPI, TelegramAPI: &telegramAPI, Config: &config}
 	application.Run()
 }
