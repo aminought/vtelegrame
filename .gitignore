@@ -1,4 +1,10 @@
+# Visual Studio Code
 .vscode
 debug
+
+# gb
+bin
+pkg
+vendor/src/
+
 config.json
-*.exe
