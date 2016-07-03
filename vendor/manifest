@@ -9,6 +9,12 @@
 			"path": "/spew"
 		},
 		{
+			"importpath": "github.com/jasonlvhit/gocron",
+			"repository": "https://github.com/jasonlvhit/gocron",
+			"revision": "42a5804d37aa0b9239b265e894a16b8edbf52d54",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/op/go-logging",
 			"repository": "https://github.com/op/go-logging",
 			"revision": "970db520ece77730c7e4724c61121037378659d9",

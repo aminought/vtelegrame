@@ -1,14 +1,14 @@
-package app
+package core
 
 import (
 	"errors"
 	"fmt"
-	"strconv"
 	tgAPI "vtelegrame/api/telegram"
 	vkAPI "vtelegrame/api/vk"
 	tgModel "vtelegrame/model/telegram"
 	vkModel "vtelegrame/model/vk"
 
+	"github.com/jasonlvhit/gocron"
 	"github.com/skratchdot/open-golang/open"
 )
 
@@ -17,8 +17,8 @@ type Application struct {
 	VKApi       *vkAPI.API
 	TelegramAPI *tgAPI.API
 	Config      *Config
-	VKUser      vkModel.User
-	Bot         tgModel.Bot
+	VKUser      *vkModel.User
+	Bot         *tgModel.Bot
 }
 
 // Run is an entry point of application
@@ -28,6 +28,7 @@ func (application *Application) Run() {
 	tokenTelegram := application.getTelegramAccessToken()
 	application.loadTelegramBot(tokenTelegram)
 	application.sendHelloMessage()
+	application.startHandleVKMessageTask()
 }
 
 func (application *Application) getVKAccessToken() string {
@@ -54,7 +55,8 @@ func (application *Application) loadVKUser(token string) {
 	var fields = []string{"uid", "first_name", "last_name"}
 	users := application.VKApi.GetUsers(nil, fields, "nom", token)
 	if len(users) > 0 {
-		var user = application.VKUser
+		application.VKUser = new(vkModel.User)
+		user := application.VKUser
 		user.Load(token, users[0])
 		fmt.Println("Hello, " + user.Name() + " " + user.LastName() + "!")
 	} else {
@@ -74,10 +76,11 @@ func (application *Application) sendHelloMessage() {
 	updates := application.TelegramAPI.GetUpdates(application.Bot)
 	chatID, err := application.getChatID(updates, target)
 	if err != nil {
-		log.Error(err.Error())
+		log.Panic(err.Error())
 	}
 
-	application.TelegramAPI.SendMessage(application.Bot, strconv.Itoa(chatID), text)
+	application.Bot.SetChatID(chatID)
+	application.TelegramAPI.SendMessage(application.Bot, text)
 	log.Info("Message \"" + text + "\" was sent")
 }
 
@@ -88,4 +91,12 @@ func (application *Application) getChatID(updates []tgModel.Update, username str
 		}
 	}
 	return -1, errors.New("Invalid user name")
+}
+
+func (application *Application) startHandleVKMessageTask() {
+	log.Info("Configure cron")
+	gocron.Every(2).Seconds().Do(HandleVKMessages, application.VKApi,
+		application.TelegramAPI, application.VKUser.AccessToken(), application.Bot)
+	log.Info("Starting cron")
+	<-gocron.Start()
 }

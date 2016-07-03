@@ -13,14 +13,19 @@ func (bot *Bot) AccessToken() string {
 	return bot.accessToken
 }
 
-// ID return telegram bot id
+// ID returns telegram bot id
 func (bot *Bot) ID() int {
 	return bot.id
 }
 
-// Username return telegram bot username
+// Username returns telegram bot username
 func (bot *Bot) Username() string {
 	return bot.username
+}
+
+// ChatID returns id of a chat with user
+func (bot *Bot) ChatID() int {
+	return bot.chatID
 }
 
 // Load bot info
