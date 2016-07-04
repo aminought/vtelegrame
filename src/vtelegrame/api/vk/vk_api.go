@@ -1,11 +1,12 @@
 package vk
 
-import "vtelegrame/model/vk"
-import "vtelegrame/http"
-import "encoding/json"
-import "github.com/op/go-logging"
-import "strconv"
-import "math/rand"
+import (
+	"encoding/json"
+	"vtelegrame/http"
+	"vtelegrame/model/vk"
+
+	"github.com/op/go-logging"
+)
 
 // API represents api for vk.com
 type API struct {
@@ -16,7 +17,7 @@ type API struct {
 var log = logging.MustGetLogger("api")
 
 // GetAuthorizeLink returns link for authorization
-func (api *API) GetAuthorizeLink() string {
+func (api *API) GetAuthorizeLink() (string, map[string]string) {
 	return api.LinkFactory.BuildAuthorizeLink(api.ClientID)
 }
 
@@ -26,10 +27,10 @@ type getUsersResponse struct {
 
 // GetUsers returns regular vk.com users
 func (api *API) GetUsers(ids []int, fields []string, nameCase string, token string) []vk.APIUser {
-	link := api.LinkFactory.BuildGetUsersLink(ids, fields, nameCase, token)
-	data := http.GetRequest(link)
+	link, data := api.LinkFactory.BuildGetUsersLink(ids, fields, nameCase, token)
+	answer := http.GetRequest(link, data)
 	response := getUsersResponse{}
-	json.Unmarshal(data, &response)
+	json.Unmarshal(answer, &response)
 
 	return response.Users
 }
@@ -43,23 +44,17 @@ type getDialogsResponse struct {
 func (api *API) GetDialogs(offset int, count int, previewLength int,
 	unread bool, token string) vk.MessageItemList {
 
-	link := api.LinkFactory.BuildGetDialogsLink(offset, count, previewLength, unread, token)
-	data := http.GetRequest(link)
+	link, data := api.LinkFactory.BuildGetDialogsLink(offset, count, previewLength, unread, token)
+	answer := http.GetRequest(link, data)
 	response := getDialogsResponse{}
-	json.Unmarshal(data, &response)
+	json.Unmarshal(answer, &response)
 
 	return response.MessageItemList
 }
 
 // SendMessage sends message to another user
 func (api *API) SendMessage(userID int, message string, token string) {
-	link := api.LinkFactory.BuildSendMessageLink()
-	data := make(map[string]string)
-	data["user_id"] = strconv.Itoa(userID)
-	data["random_id"] = strconv.Itoa(rand.Int())
-	data["message"] = message
-	data["access_token"] = token
-	data["v"] = "5.52"
+	link, data := api.LinkFactory.BuildSendMessageLink(userID, message, token)
 	http.PostRequest(link, data)
 }
 
@@ -70,10 +65,10 @@ type getMessagesResponse struct {
 // GetMessages returns vk.com messages
 func (api *API) GetMessages(offset int, count int, filters int,
 	previewLength int, token string) []vk.Message {
-	link := api.LinkFactory.BuildGetMessagesLink(offset, count, filters, previewLength, token)
-	data := http.GetRequest(link)
+	link, data := api.LinkFactory.BuildGetMessagesLink(offset, count, filters, previewLength, token)
+	answer := http.GetRequest(link, data)
 	response := getMessagesResponse{}
-	json.Unmarshal(data, &response)
+	json.Unmarshal(answer, &response)
 
 	return response.MessageList.Messages
 }
@@ -92,16 +87,16 @@ func (api *API) GetUnreadMessages(token string) []vk.Message {
 
 // GetMessagesByID returs vk.com messages by id
 func (api *API) GetMessagesByID(ids []int, previewLength int, token string) []vk.Message {
-	link := api.LinkFactory.BuildGetMessagesByIDLink(ids, previewLength, token)
-	data := http.GetRequest(link)
+	link, data := api.LinkFactory.BuildGetMessagesByIDLink(ids, previewLength, token)
+	answer := http.GetRequest(link, data)
 	response := getMessagesResponse{}
-	json.Unmarshal(data, &response)
+	json.Unmarshal(answer, &response)
 
 	return response.MessageList.Messages
 }
 
 // MarkMessageAsRead marks vk.com messages as read
 func (api *API) MarkMessageAsRead(ids []int, token string) {
-	link := api.LinkFactory.BuildMarkMessageAsReadLink(ids, token)
-	http.GetRequest(link)
+	link, data := api.LinkFactory.BuildMarkMessageAsReadLink(ids, token)
+	http.GetRequest(link, data)
 }

@@ -9,7 +9,6 @@ import (
 	vkModel "vtelegrame/model/vk"
 
 	"github.com/jasonlvhit/gocron"
-	"github.com/skratchdot/open-golang/open"
 )
 
 // Application is a main struct
@@ -35,16 +34,8 @@ func (application *Application) getVKAccessToken() string {
 	if application.Config.VKAccessToken != "" {
 		return application.Config.VKAccessToken
 	}
-
-	fmt.Println("Hello, user. Let's authorize in vk.com.")
-	var link = application.VKApi.GetAuthorizeLink()
-	open.Start(link)
-
-	fmt.Println("Please, insert here your access token:")
-	var token string
-	fmt.Scanf("%s", &token)
-
-	return token
+	log.Panic("vk.com access token is empty")
+	return ""
 }
 
 func (application *Application) getTelegramAccessToken() string {

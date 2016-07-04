@@ -1,7 +1,10 @@
 package telegram
 
-import "testing"
-import "github.com/stretchr/testify/assert"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestLoad(t *testing.T) {
 	var bot Bot

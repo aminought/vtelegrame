@@ -1,9 +1,12 @@
 package core
 
-import "testing"
-import "os"
-import "io/ioutil"
-import "github.com/stretchr/testify/assert"
+import (
+	"io/ioutil"
+	"os"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestLoad(t *testing.T) {
 	var config Config

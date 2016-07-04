@@ -1,7 +1,10 @@
 package util
 
-import "testing"
-import "github.com/stretchr/testify/assert"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestGetCommaSeparatedString(t *testing.T) {
 	ints := []int{1, 2, 3}

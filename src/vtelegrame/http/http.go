@@ -1,15 +1,29 @@
 package http
 
-import "net/http"
-import "github.com/op/go-logging"
-import "io/ioutil"
-import "net/url"
+import (
+	"io/ioutil"
+	"net/http"
+	"net/url"
+
+	"github.com/op/go-logging"
+)
 
 var log = logging.MustGetLogger("http")
 
 // GetRequest does http get request to the remote server and returns result
-func GetRequest(link string) []byte {
-	resp, err := http.Get(link)
+func GetRequest(link string, data map[string]string) []byte {
+	req, _ := http.NewRequest("GET", link, nil)
+
+	if data != nil {
+		q := req.URL.Query()
+		for k, v := range data {
+			q.Add(k, v)
+		}
+		req.URL.RawQuery = q.Encode()
+	}
+
+	client := http.Client{}
+	resp, err := client.Do(req)
 	logIfConnectionError(err)
 	return readData(resp)
 }

@@ -10,8 +10,6 @@ import (
 // HandleVKMessages fetch unread messages, mark it as read,
 // reply with concrete message and notify with telegram bot
 func HandleVKMessages(vkapi *vkAPI.API, tgapi *tgAPI.API, vkToken string, tgBot *tgModel.Bot) {
-	log.Info("Start handling")
-
 	dialogs := getVKUnreadDialogs(vkapi, vkToken)
 	unreadMessages := vkapi.GetUnreadMessages(vkToken)
 
@@ -30,13 +28,12 @@ func HandleVKMessages(vkapi *vkAPI.API, tgapi *tgAPI.API, vkToken string, tgBot 
 func crosspostMessages(lastMessage vkModel.Message, unreadMessages []vkModel.Message,
 	vkapi *vkAPI.API, tgapi *tgAPI.API, vkToken string, tgBot *tgModel.Bot) {
 
-	log.Info("Start crossposting")
-
 	for _, v := range unreadMessages {
 		if v.UserID == lastMessage.UserID && v.ChatID == lastMessage.ChatID {
 			text := v.Body
 			vkapi.MarkMessageAsRead([]int{v.ID}, vkToken)
 			tgapi.SendMessage(tgBot, text)
+			log.Info("Message \"" + text + "\" was sent")
 		}
 	}
 }

@@ -29,7 +29,7 @@ func TestGetRequest(t *testing.T) {
 	server := httptest.NewServer(&handler)
 	defer server.Close()
 
-	data := GetRequest(server.URL)
+	data := GetRequest(server.URL, nil)
 	assert.Equal(t, getAnswer, string(data))
 }
 
