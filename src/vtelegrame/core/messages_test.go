@@ -25,3 +25,11 @@ func TestGetTgMessageFormat(t *testing.T) {
 
 	assert.Equal(t, expected, message)
 }
+
+func TestGetTgStartMessageFormat(t *testing.T) {
+	messages := Messages{}
+	messages.TgStartMessage = "Hello, %tg_login%."
+	message := messages.GetTgStartMessageFormat("login")
+	expected := "Hello, login."
+	assert.Equal(t, expected, message)
+}

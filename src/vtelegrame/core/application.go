@@ -2,7 +2,6 @@ package core
 
 import (
 	"errors"
-	"fmt"
 	tgAPI "vtelegrame/api/telegram"
 	vkAPI "vtelegrame/api/vk"
 	tgModel "vtelegrame/model/telegram"
@@ -16,6 +15,7 @@ type Application struct {
 	VKApi       *vkAPI.API
 	TelegramAPI *tgAPI.API
 	Config      *Config
+	Messages    *Messages
 	VKUser      *vkModel.User
 	Bot         *tgModel.Bot
 }
@@ -44,14 +44,14 @@ func (application *Application) getTelegramAccessToken() string {
 
 func (application *Application) loadVKUser(token string) {
 	var fields = []string{"uid", "first_name", "last_name"}
-	users := application.VKApi.GetUsers(nil, fields, "nom", token)
+	users := application.VKApi.GetUsers([]int{}, fields, "nom", token)
 	if len(users) > 0 {
 		application.VKUser = new(vkModel.User)
 		user := application.VKUser
 		user.Load(token, users[0])
-		fmt.Println("Hello, " + user.Name() + " " + user.LastName() + "!")
+		log.Info("User", user.Name(), user.LastName(), "loaded")
 	} else {
-		log.Error("Who are you?")
+		log.Panic("Who are you?")
 	}
 }
 
@@ -63,7 +63,6 @@ func (application *Application) loadTelegramBot(token string) {
 func (application *Application) sendHelloMessage() {
 	config := application.Config
 	target := config.TelegramUser
-	var text = "Hello, " + target + "! Bot will be ready for crossposting soon."
 	updates := application.TelegramAPI.GetUpdates(application.Bot)
 	chatID, err := application.getChatID(updates, target)
 	if err != nil {
@@ -71,6 +70,7 @@ func (application *Application) sendHelloMessage() {
 	}
 
 	application.Bot.SetChatID(chatID)
+	text := application.Messages.GetTgStartMessageFormat(target)
 	application.TelegramAPI.SendMessage(application.Bot, text)
 	log.Info("Message \"" + text + "\" was sent")
 }
@@ -87,7 +87,8 @@ func (application *Application) getChatID(updates []tgModel.Update, username str
 func (application *Application) startHandleVKMessageTask() {
 	log.Info("Configure cron")
 	gocron.Every(2).Seconds().Do(HandleVKMessages, application.VKApi,
-		application.TelegramAPI, application.VKUser.AccessToken(), application.Bot)
+		application.TelegramAPI, application.VKUser.AccessToken(),
+		application.Bot, application.Messages)
 	log.Info("Starting cron")
 	<-gocron.Start()
 }

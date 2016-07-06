@@ -35,7 +35,7 @@ func TestBuildGetUsersLink(t *testing.T) {
 
 	assert.Equal(t, expectedLink, link)
 	assert.Equal(t, 5, len(data))
-	assert.Equal(t, "1,2", data["ids"])
+	assert.Equal(t, "1,2", data["user_ids"])
 	assert.Equal(t, "uid,first_name", data["fields"])
 	assert.Equal(t, nameCase, data["name_case"])
 	assert.Equal(t, token, data["access_token"])

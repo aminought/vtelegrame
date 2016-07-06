@@ -24,6 +24,7 @@
         "В наше время никому нельзя доверять, даже мне.",
         "Дуров, верни стену"
     ],
+    "tg_start_message" : "Привет, %tg_login%. Бот готов к кросспостингу.",
     "tg_message_format": [
         "%firstname% %lastname% %chat_braces%:",
         "",

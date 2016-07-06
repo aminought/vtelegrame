@@ -35,7 +35,7 @@ func (factory *LinkFactory) BuildGetUsersLink(ids []int, fields []string,
 
 	link := apiRequestStart + method
 	data := make(map[string]string)
-	data["ids"] = util.GetCommaSeparatedString(&idArr)
+	data["user_ids"] = util.GetCommaSeparatedString(&idArr)
 	data["fields"] = util.GetCommaSeparatedString(&fieldArr)
 	data["name_case"] = nameCase
 	data["access_token"] = token

@@ -14,6 +14,9 @@ func main() {
 	config := core.Config{}
 	config.Load("config.json")
 	log.Info("Config loaded")
+	messages := core.Messages{}
+	messages.Load("messages.json")
+	log.Info("Messages loaded")
 
 	vkLinkFactory := vk.LinkFactory{}
 	vkAPI := vk.API{LinkFactory: vkLinkFactory}
@@ -21,6 +24,7 @@ func main() {
 	tgLinkFactory := telegram.LinkFactory{}
 	telegramAPI := telegram.API{LinkFactory: tgLinkFactory}
 
-	application := core.Application{VKApi: &vkAPI, TelegramAPI: &telegramAPI, Config: &config}
+	application := core.Application{VKApi: &vkAPI, TelegramAPI: &telegramAPI,
+		Config: &config, Messages: &messages}
 	application.Run()
 }

@@ -17,7 +17,9 @@ func GetRequest(link string, data map[string]string) []byte {
 	if data != nil {
 		q := req.URL.Query()
 		for k, v := range data {
-			q.Add(k, v)
+			if v != "" {
+				q.Add(k, v)
+			}
 		}
 		req.URL.RawQuery = q.Encode()
 	}
@@ -31,10 +33,15 @@ func GetRequest(link string, data map[string]string) []byte {
 // PostRequest does http post request to the remote server and return result
 func PostRequest(link string, data map[string]string) []byte {
 	values := url.Values{}
-	for k, v := range data {
-		values.Set(k, v)
+	if data != nil {
+		for k, v := range data {
+			if v != "" {
+				values.Add(k, v)
+			}
+		}
 	}
-
+	log.Info(values)
+	log.Info(values.Encode())
 	resp, err := http.PostForm(link, values)
 	logIfConnectionError(err)
 	return readData(resp)

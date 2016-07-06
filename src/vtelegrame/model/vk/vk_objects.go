@@ -2,9 +2,10 @@ package vk
 
 // APIUser represents regular vk.com user
 type APIUser struct {
-	ID       int    `json:"uid"`
+	ID       int    `json:"id"`
 	Name     string `json:"first_name"`
 	LastName string `json:"last_name"`
+	Sex      int    `json:"sex"`
 }
 
 // Message represents vk.com message
