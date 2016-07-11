@@ -26,6 +26,7 @@ func HandleVKMessages(vkapi *vkAPI.API, tgapi *tgAPI.API, vkToken string,
 			u := users[0]
 			text := messages.GetVkAutoAnswer(u.Sex, tgBot.Username())
 			vkapi.SendMessage(id, text, vkToken)
+			log.Info("Auto answer was sent")
 		}
 	}
 }

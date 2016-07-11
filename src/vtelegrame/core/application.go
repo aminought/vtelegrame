@@ -63,6 +63,7 @@ func (application *Application) loadTelegramBot(token string) {
 func (application *Application) sendHelloMessage() {
 	config := application.Config
 	target := config.TelegramUser
+	application.Bot.SetUsername(target)
 	updates := application.TelegramAPI.GetUpdates(application.Bot)
 	chatID, err := application.getChatID(updates, target)
 	if err != nil {

@@ -4,6 +4,7 @@ package telegram
 type Bot struct {
 	accessToken string
 	id          int
+	name        string
 	username    string
 	chatID      int
 }
@@ -18,9 +19,13 @@ func (bot *Bot) ID() int {
 	return bot.id
 }
 
-// Username returns telegram bot username
+// Name returns telegram bot username
+func (bot *Bot) Name() string {
+	return bot.name
+}
+
 func (bot *Bot) Username() string {
-	return bot.username
+	return bot.username;
 }
 
 // ChatID returns id of a chat with user
@@ -29,13 +34,18 @@ func (bot *Bot) ChatID() int {
 }
 
 // Load bot info
-func (bot *Bot) Load(token string, id int, username string) {
+func (bot *Bot) Load(token string, id int, name string) {
 	bot.accessToken = token
 	bot.id = id
-	bot.username = username
+	bot.name = name
 }
 
 // SetChatID sets id of the chat with user
 func (bot *Bot) SetChatID(id int) {
 	bot.chatID = id
+}
+
+// SetUsername sets name of telegram user
+func (bot *Bot) SetUsername(username string) {
+	bot.username = username;
 }

@@ -15,19 +15,19 @@ type Messages struct {
 }
 
 const (
-	tglogin    = "%tg_login%"
-	firstname  = "%firstname%"
-	lastname   = "%lastname%"
-	sex        = "%sex%"
-	sex2       = "%sex2%"
+	tglogin = "%tg_login%"
+	firstname = "%firstname%"
+	lastname = "%lastname%"
+	sex = "%sex%"
+	sex2 = "%sex2%"
 	chatbraces = "%chat_braces%"
-	text       = "%text%"
+	text = "%text%"
 )
 
 const (
-	female  = iota
-	male    = iota
-	unknown = iota
+	female = 1
+	male = 2
+	unknown = 3
 )
 
 type pair struct {
@@ -49,7 +49,7 @@ func (messages *Messages) GetVkAutoAnswer(sexP int, tgloginP string) string {
 
 // GetTgMessageFormat returns message for crossposting to telegram
 func (messages *Messages) GetTgMessageFormat(firstnameP string, lastnameP string,
-	chatTitle string, textP string) string {
+chatTitle string, textP string) string {
 	answer := strings.Join(messages.TgMessageFormat, "\n")
 	chat := messages.getChatBraces(chatTitle)
 	return messages.replaceKeywords(answer, pair{firstname, firstnameP},

@@ -40,8 +40,6 @@ func PostRequest(link string, data map[string]string) []byte {
 			}
 		}
 	}
-	log.Info(values)
-	log.Info(values.Encode())
 	resp, err := http.PostForm(link, values)
 	logIfConnectionError(err)
 	return readData(resp)
